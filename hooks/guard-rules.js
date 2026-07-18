@@ -8,10 +8,10 @@ const database = [
 ];
 
 const device = [
-  { id: 'dev_dd', tier: 'block', pattern: /\bdd\b[\s\S]*\bof=\/dev\//i, note: 'dd writing to a raw device destroys it' },
+  { id: 'dev_dd', tier: 'block', pattern: /\bdd\b[^|&;\n]*\bof=\/dev\//i, note: 'dd writing to a raw device destroys it' },
   { id: 'dev_mkfs', tier: 'block', pattern: /\bmkfs(?:\.\w+)?\b/i, note: 'mkfs formats a filesystem' },
-  { id: 'dev_shred', tier: 'block', pattern: /\bshred\b/i, note: 'shred irreversibly wipes files' },
-  { id: 'dev_truncate_zero', tier: 'block', pattern: /\btruncate\s+-s\s*0\b/i, note: 'truncate -s0 empties a file' },
+  { id: 'dev_shred', tier: 'block', pattern: /\bshred\s+\S/i, note: 'shred irreversibly wipes files' },
+  { id: 'dev_truncate_zero', tier: 'block', pattern: /\btruncate\s+(?:-s\s*0|--size[= ]0)\b/i, note: 'truncate to zero empties a file' },
   { id: 'dev_overwrite_device', tier: 'block', pattern: />\s*\/dev\/(?:sd|nvme|hd|disk)/i, note: 'redirect into a raw device' },
 ];
 
@@ -25,21 +25,21 @@ const windowsStorage = [
 const windowsOps = [
   { id: 'win_reg_delete', tier: 'ask', pattern: /\breg\s+delete\b/i, note: 'reg delete removes registry keys' },
   { id: 'win_sc_delete', tier: 'ask', pattern: /\bsc\s+(?:delete|stop)\b/i, note: 'sc delete/stop removes or halts a service' },
-  { id: 'win_schtasks_delete', tier: 'ask', pattern: /\bschtasks\b[\s\S]*\/delete\b/i, note: 'schtasks /delete removes a scheduled task' },
-  { id: 'win_shutdown', tier: 'ask', pattern: /\b(?:shutdown|restart-computer|stop-computer)\b/i, note: 'shuts down or reboots the machine' },
+  { id: 'win_schtasks_delete', tier: 'ask', pattern: /\bschtasks\b[^|&;\n]*\/delete\b/i, note: 'schtasks /delete removes a scheduled task' },
+  { id: 'win_shutdown', tier: 'ask', pattern: /\bshutdown(?=\s|$|\/)|\b(?:restart-computer|stop-computer)\b/i, note: 'shuts down or reboots the machine' },
 ];
 
 const cloud = [
   { id: 'cloud_vercel_remove', tier: 'ask', pattern: /\bvercel\s+(?:remove|rm)\b/i, note: 'vercel remove deletes a deployment' },
   { id: 'cloud_railway_down', tier: 'ask', pattern: /\brailway\s+(?:down|delete)\b/i, note: 'railway down/delete tears down a service' },
-  { id: 'cloud_cloudflare_delete', tier: 'ask', pattern: /\b(?:wrangler|cloudflare)\b[\s\S]*\bdelete\b/i, note: 'Cloudflare/wrangler delete' },
+  { id: 'cloud_cloudflare_delete', tier: 'ask', pattern: /\b(?:wrangler|cloudflare)\b[^|&;\n]*\bdelete\b/i, note: 'Cloudflare/wrangler delete' },
   { id: 'cloud_terraform', tier: 'ask', pattern: /\bterraform\s+(?:destroy|apply)\b/i, note: 'terraform destroy/apply mutates infra' },
   { id: 'cloud_kubectl_delete', tier: 'ask', pattern: /\bkubectl\s+delete\b/i, note: 'kubectl delete removes cluster resources' },
   { id: 'cloud_helm_delete', tier: 'ask', pattern: /\bhelm\s+(?:delete|uninstall)\b/i, note: 'helm delete/uninstall removes a release' },
   { id: 'cloud_docker_prune', tier: 'ask', pattern: /\bdocker\s+(?:system\s+|volume\s+|image\s+|container\s+)?prune\b/i, note: 'docker prune reclaims and deletes' },
-  { id: 'cloud_aws_destructive', tier: 'ask', pattern: /\baws\s+[\s\S]*(?:delete-|terminate-|remove-|deregister-|\brb\b|\brm\b)/i, note: 'destructive aws CLI verb' },
-  { id: 'cloud_gcloud_delete', tier: 'ask', pattern: /\bgcloud\s+[\s\S]*\bdelete\b/i, note: 'gcloud delete' },
-  { id: 'cloud_az_delete', tier: 'ask', pattern: /\baz\s+[\s\S]*\bdelete\b/i, note: 'az delete' },
+  { id: 'cloud_aws_destructive', tier: 'ask', pattern: /\baws\s+[^|&;\n]*(?:delete-|terminate-|remove-|deregister-|\brb\b|\brm\b)/i, note: 'destructive aws CLI verb' },
+  { id: 'cloud_gcloud_delete', tier: 'ask', pattern: /\bgcloud\s+[^|&;\n]*\bdelete\b/i, note: 'gcloud delete' },
+  { id: 'cloud_az_delete', tier: 'ask', pattern: /\baz\s+[^|&;\n]*\bdelete\b/i, note: 'az delete' },
 ];
 
 const obfuscation = [
@@ -54,8 +54,8 @@ const packageSystem = [
 ];
 
 const bulkDelete = [
-  { id: 'fs_find_delete', tier: 'ask', pattern: /\bfind\b[\s\S]*-delete\b/i, note: 'find -delete removes every match under an unknown scope' },
-  { id: 'fs_find_exec_rm', tier: 'ask', pattern: /\bfind\b[\s\S]*-exec\s+rm\b/i, note: 'find -exec rm removes every match' },
+  { id: 'fs_find_delete', tier: 'ask', pattern: /\bfind\b[^|&;\n]*-delete\b/i, note: 'find -delete removes every match under an unknown scope' },
+  { id: 'fs_find_exec_rm', tier: 'ask', pattern: /\bfind\b[^|&;\n]*-exec\s+rm\b/i, note: 'find -exec rm removes every match' },
   { id: 'fs_xargs_rm', tier: 'ask', pattern: /\bxargs\b[^|]*\brm\s+-[a-z]*[rf]/i, note: 'xargs piping into rm -rf' },
 ];
 

@@ -1,6 +1,6 @@
 {
   "name": "claude-code-command-guard",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Zero-dependency Claude Code PreToolUse hook that blocks or asks on destructive shell commands (recursive deletes of protected paths, DB drops, force-push to main, disk wipes) with compound-command splitting and interpreter-body re-scan.",
   "keywords": [
     "claude-code",

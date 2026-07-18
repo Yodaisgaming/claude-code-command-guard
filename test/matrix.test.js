@@ -86,6 +86,7 @@ const BLOCK = [
   'mkfs.ext4 /dev/sdb1',
   'shred -u secret.txt',
   'truncate -s 0 important.log',
+  'truncate --size=0 important.log',
   'vssadmin delete shadows /all /quiet',
   'Format-Volume -DriveLetter D',
   'format C: /fs:ntfs',
@@ -99,6 +100,7 @@ const BLOCK = [
   'git push origin +main',
   'git push --force-with-lease origin HEAD',
   'git reset --hard HEAD~3 && git push -f origin main',
+  'git reset --hard HEAD~3 && git push origin feature-x',
   'rm C:/Windows -r',
   'rm ' + PROT_NIX + ' -r',
   'node -e "require(\'fs\').rmSync(\'/etc/x\', {recursive:true})"',
@@ -215,6 +217,13 @@ const ALLOW = [
   'git commit -m "delete from old docs"',
   'rimraf --help',
   'rm -rf coverage/100%',
+  'aws s3 ls && rm temp.txt',
+  'aws sts get-caller-identity && npm run remove-cache',
+  'gcloud projects list | grep delete',
+  'cd shred-project',
+  'git clone https://example.com/shred.git',
+  'npm run shutdown-server',
+  'redis-cli ping && echo /delete',
 ];
 
 let fails = 0;
@@ -277,12 +286,16 @@ function timedEval(input) {
 const redosMs = timedEval('echo ' + 'a'.repeat(99 * 1024));
 const dollarMs = timedEval('$(a)'.repeat(24 * 1000));
 const interpMs = timedEval('bash -c "' + 'x'.repeat(96 * 1024) + '"');
+const sqInterpMs = timedEval("rm -rf / ; bash -c '" + '\\'.repeat(4000));
+const sqFlagMs = timedEval("mysql -e '" + '\\'.repeat(4000));
+const sqLiteMs = timedEval("sqlite3 db.sqlite '" + '\\'.repeat(4000));
 
 console.log('\nblock ' + BLOCK.length + ', ask ' + ASK.length + ', allow ' + ALLOW.length);
 console.log('allow-path per-call: ' + perCallMs.toFixed(4) + ' ms');
 console.log('99KB filler eval: ' + redosMs.toFixed(1) + ' ms | 96KB $()-spam: ' + dollarMs.toFixed(1) + ' ms | 96KB interp-body: ' + interpMs.toFixed(1) + ' ms');
+console.log('single-quote+backslash (interp/sql-flag/sqlite): ' + sqInterpMs.toFixed(1) + ' / ' + sqFlagMs.toFixed(1) + ' / ' + sqLiteMs.toFixed(1) + ' ms');
 if (perCallMs > 50) { fails++; console.log('FAIL allow path slower than 50ms'); }
-for (const [label, ms] of [['99KB filler', redosMs], ['$()-spam', dollarMs], ['interp-body', interpMs]]) {
+for (const [label, ms] of [['99KB filler', redosMs], ['$()-spam', dollarMs], ['interp-body', interpMs], ['sq-interp', sqInterpMs], ['sq-flag', sqFlagMs], ['sq-sqlite', sqLiteMs]]) {
   if (ms > 1000) { fails++; console.log('FAIL ' + label + ' input slower than 1000ms (possible ReDoS/amplification)'); }
 }
 
@@ -292,4 +305,4 @@ if (fails) {
   console.log('\n' + fails + ' FAILURE(S)');
   process.exit(1);
 }
-console.log('\nALL PASS (block ' + BLOCK.length + ', ask ' + ASK.length + ', allow ' + ALLOW.length + ', fail-closed 6, bad-config 2, timing 3 ok)');
+console.log('\nALL PASS (block ' + BLOCK.length + ', ask ' + ASK.length + ', allow ' + ALLOW.length + ', fail-closed 6, bad-config 2, timing 6 ok)');

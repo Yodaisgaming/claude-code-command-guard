@@ -75,7 +75,7 @@ function extractInner(text) {
     const m = String(v).match(/^\s*(["'])([\s\S]*)\1\s*$/);
     return m ? m[2] : v;
   };
-  const reInterp = /\b(?:bash|sh|zsh|dash|python3?|node|nodejs|perl|ruby|php|powershell|pwsh)\b(?:\s+-\w+)*\s+(?:-c|-e|-command|--command)\s+("(?:[^"\\]|\\.)*"|'(?:[^']|\\.)*'|\S+)/gi;
+  const reInterp = /\b(?:bash|sh|zsh|dash|python3?|node|nodejs|perl|ruby|php|powershell|pwsh)\b(?:\s+-\w+)*\s+(?:-c|-e|-command|--command)\s+("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'|\S+)/gi;
   const reCmd = /\bcmd(?:\.exe)?\s+\/[ck]\s+("[^"]*"|'[^']*'|[^\n]+)/gi;
   const reHeredoc = /<<-?\s*['"]?(\w+)['"]?\s*\n([\s\S]*?)\n\s*\1\b/g;
   const reDollar = /\$\(([\s\S]*?)\)/g;
@@ -307,11 +307,11 @@ function sqlPayloads(seg) {
   const unquote = (v) => v.replace(/^['"]|['"]$/g, '');
   if (isClient) {
     if (/^sqlite3?$/.test(cmd)) {
-      const qre = /("(?:[^"\\]|\\.)*"|'(?:[^']|\\.)*')/g;
+      const qre = /("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*')/g;
       let qm; let qn = 0;
       while (qn++ < 50 && (qm = qre.exec(seg))) out.push(unquote(qm[1]));
     } else if (SQL_FLAG_RE[cmd]) {
-      const re = new RegExp(SQL_FLAG_RE[cmd] + '\\s*=?\\s*("(?:[^"\\\\]|\\\\.)*"|\'(?:[^\']|\\\\.)*\'|[^\\s"\']\\S*)', 'gi');
+      const re = new RegExp(SQL_FLAG_RE[cmd] + '\\s*=?\\s*("(?:[^"\\\\]|\\\\.)*"|\'(?:[^\'\\\\]|\\\\.)*\'|[^\\s"\']\\S*)', 'gi');
       let m; let n = 0;
       while (n++ < 50 && (m = re.exec(seg))) out.push(unquote(m[1]));
     }
