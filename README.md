@@ -1,5 +1,9 @@
 # claude-code-command-guard
 
+<p align="center">
+  <img src="assets/demo.svg" alt="command-guard evaluating real shell commands and returning allow, ask, or block verdicts with the matched rule ID" width="100%">
+</p>
+
 A single-file, zero-dependency PreToolUse hook for [Claude Code](https://code.claude.com) that stops the agent from running **destructive shell commands**: recursive deletes of protected paths, database drops, disk wipes, and history-rewriting git pushes. It splits compound commands and re-scans interpreter bodies, so the check is not fooled by `&&`, `bash -c "..."`, or `$(...)`. It is **fail-closed**: if the hook cannot parse a command, it denies rather than waves it through.
 
 ```
