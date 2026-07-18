@@ -135,6 +135,11 @@ const BLOCK = [
   'psql -X -q -c "DELETE FROM users"',
   'sudo -iu postgres psql -c "DELETE FROM users"',
   'time -p psql -c "DELETE FROM users"',
+  'rm -rf /usr/bin/importantdir',
+  'rm -rf /bin/foo',
+  'rm -rf /usr/local/bin/stuff',
+  'del /s /usr/bin/foo',
+  'Remove-Item -Recurse /bin/foo',
 ];
 
 const ASK = [
@@ -186,7 +191,6 @@ const ALLOW = [
   'rm -rf __pycache__',
   'rm -rf output/',
   'rm -rf ./tmp-work',
-  'rm -rf ' + HOME + '/projects/app/node_modules',
   'rm -rf ' + SAFE_WIN + '/checkout',
   'rm -rf ' + SAFE_NIX + '/out',
   'Remove-Item foo.txt',
@@ -224,6 +228,9 @@ const ALLOW = [
   'git clone https://example.com/shred.git',
   'npm run shutdown-server',
   'redis-cli ping && echo /delete',
+  '/usr/bin/env python script.py',
+  'sudo /usr/bin/apt update',
+  '/usr/bin/git status',
 ];
 
 let fails = 0;
@@ -238,6 +245,13 @@ function check(label, cmd, want) {
 for (const c of BLOCK) check('BLOCK', c, 'deny');
 for (const c of ASK) check('ASK', c, 'ask');
 for (const c of ALLOW) check('ALLOW', c, 'allow');
+
+const HOME_NORM = HOME.toLowerCase().replace(/\/+$/, '');
+const HOME_PROTECTED = ['/etc', '/usr', '/bin', '/sbin', '/lib', '/lib64', '/boot', '/dev', '/proc', '/sys', '/var', '/opt', '/root']
+  .some((r) => HOME_NORM === r || HOME_NORM.startsWith(r + '/'));
+check(HOME_PROTECTED ? 'BLOCK-HOME-ROOT' : 'ALLOW-HOME-BUILD',
+  'rm -rf ' + HOME + '/projects/app/node_modules',
+  HOME_PROTECTED ? 'deny' : 'allow');
 
 function expectEvalDeny(label, cmd) {
   const got = evaluate(cmd).decision;

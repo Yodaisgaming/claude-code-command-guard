@@ -62,7 +62,7 @@ function normalizeSegment(s) {
     t = t.slice(1, -1).trim();
   }
   t = t.replace(/\s+/g, ' ');
-  t = t.replace(/(^|[\s;&|(])\/(?:usr\/)?(?:local\/)?s?bin\//g, '$1');
+  t = t.replace(/^((?:(?:sudo|doas|env|nice|time|nohup|command|exec)\s+(?:-\S+\s+|[\w.]+=\S+\s+)*)?)\/(?:usr\/)?(?:local\/)?s?bin\//i, '$1');
   return t;
 }
 
