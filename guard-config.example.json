@@ -1,0 +1,10 @@
+{
+  "protectedRoots": [
+    "C:/work/live-sites",
+    "/srv/production"
+  ],
+  "safeRoots": [
+    "C:/ci-artifacts",
+    "/home/me/build-cache"
+  ]
+}

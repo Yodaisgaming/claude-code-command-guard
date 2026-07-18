@@ -1,0 +1,35 @@
+{
+  "name": "claude-code-command-guard",
+  "version": "1.0.0",
+  "description": "Zero-dependency Claude Code PreToolUse hook that blocks or asks on destructive shell commands (recursive deletes of protected paths, DB drops, force-push to main, disk wipes) with compound-command splitting and interpreter-body re-scan.",
+  "keywords": [
+    "claude-code",
+    "hooks",
+    "pretooluse",
+    "safety",
+    "guardrails",
+    "destructive-commands",
+    "rm-rf",
+    "security"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Yodaisgaming/claude-code-command-guard.git"
+  },
+  "homepage": "https://github.com/Yodaisgaming/claude-code-command-guard#readme",
+  "bugs": {
+    "url": "https://github.com/Yodaisgaming/claude-code-command-guard/issues"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "test": "node test/matrix.test.js"
+  },
+  "files": [
+    "hooks/destructive-command-guard.js",
+    "hooks/guard-rules.js",
+    "guard-config.example.json"
+  ]
+}
