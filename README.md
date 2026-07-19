@@ -170,10 +170,6 @@ Known accepted residuals, in the fail-closed spirit of erring toward a block:
 - A recursive-delete target that is a **quoted path containing spaces** (`rm -rf "C:/Program Files/app"`) may not resolve to its protected root, because target extraction splits on whitespace. Space-free system paths (`C:/Windows`, `/usr`) are unaffected.
 - The `DELETE FROM` without-`WHERE` check reads SQL from a client's command-line query flag only (`-e`/`-c`/`-Q`/`--query`/`--execute`, or a quoted SQLite argument). SQL supplied by **file or input redirection** (`psql -f drop.sql`, `mysql < script.sql`) is not parsed, since the hook does not read file contents. The keyword rules (`DROP`, `TRUNCATE`, `dropdb`) still fire on the command line itself, and this whole SQL layer sits on top of the primary filesystem/device/git protection, which does not depend on it.
 
-## How this compares to the field
-
-Surveyed by reading implementations, not READMEs (July 2026 snapshot). The most complete public tool is [Dicklesworthstone/destructive_command_guard](https://github.com/Dicklesworthstone/destructive_command_guard): a Rust hook with 50+ rule packs and a tree-sitter re-parse of interpreter payloads, covering Claude Code, Codex, and Gemini. It is excellent as a pattern donor, but it ships as a compiled binary (a non-starter in environments that treat unsigned native binaries as a supply-chain risk) and defaults to fail-open. Lighter Node efforts like `kenryu42/cc-safety-net` and `lloydzhou/bash-guard` establish the exit-2 blocking pattern and the fail-closed-on-parse-error default (the right default, and the one used here). This hook's niche is the combination: zero-dependency Node (no binary to trust), fail-closed, compound-command and interpreter-body coverage, native Windows destructive commands (`rd /s`, `Remove-Item -Recurse`, `Format-Volume`, `vssadmin`, `diskpart`) alongside POSIX ones, and user-configurable protected paths rather than a fixed list.
-
 ## Test
 
 ```
@@ -188,7 +184,7 @@ Remove the hook entry from your `settings.json` `PreToolUse` array and restart C
 
 ## Provenance
 
-The design was shaped by an audit of a real agent setup (where the holes were opt-in per-script gates that nothing forced an agent through), then hardened over several rounds of adversarial review by a second model acting as a red-team reviewer. What is reproducible from this repo is the test matrix: every behavior claimed above has a corresponding case in `test/matrix.test.js`.
+I built this for my own always-on agent setup, where the only safety gates were opt-in per-script checks that nothing forced an agent through, and hardened it over several rounds of adversarial cross-model review. Every behavior claimed above has a corresponding case in `test/matrix.test.js`.
 
 ## License
 
