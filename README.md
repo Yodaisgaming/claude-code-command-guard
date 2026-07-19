@@ -147,7 +147,7 @@ Each segment of a command is classified into the highest-severity tier it matche
 
 ## How it works
 
-Five mechanisms, each present because a naive version was reachable without it:
+Five mechanisms:
 
 1. **Compound-command splitting.** The command is split on `&&`, `||`, `;`, `|`, and newlines, and every segment is judged independently. `echo ok && rm -rf ~` is not safe just because it starts with `echo`.
 2. **Binary-path and flag normalization.** Segments are lowercased, whitespace-collapsed, and absolute tool paths are stripped (`/usr/bin/git` becomes `git`), so a full path cannot slip a rule. Flag clusters (`-rf`, `-fr`, `-Rf`) are matched as sets, not literal strings.
@@ -184,7 +184,7 @@ Remove the hook entry from your `settings.json` `PreToolUse` array and restart C
 
 ## Provenance
 
-I built this for my own always-on agent setup, where the only safety gates were opt-in per-script checks that nothing forced an agent through, and hardened it over several rounds of adversarial cross-model review. Every behavior claimed above has a corresponding case in `test/matrix.test.js`.
+I built this for my own always-on agent setup, where the only safety gates were opt-in per-script checks that nothing forced an agent through, and hardened it against a suite of adversarial command shapes. Every behavior claimed above has a corresponding case in `test/matrix.test.js`.
 
 ## License
 
